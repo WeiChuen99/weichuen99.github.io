@@ -37,6 +37,8 @@ export interface RefuelReceipt {
   carBCost: number;
   notes?: string;
   createdAt: Date;
+  createdBy?: string;
+  createdByUid?: string;
 }
 
 export interface Settings {

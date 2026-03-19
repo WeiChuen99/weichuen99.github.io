@@ -3,14 +3,21 @@ import { FuelEntryForm } from './components/FuelEntryForm';
 import { Dashboard } from './components/Dashboard';
 import { HistoryTable } from './components/HistoryTable';
 import { SettingsEditor } from './components/SettingsEditor';
+import { Login } from './components/Login';
 import { useSettings } from './hooks/useSettings';
 import { useRefuelReceipts } from './hooks/useRefuelReceipts';
-import { Fuel, LayoutDashboard, History, Settings as SettingsIcon } from 'lucide-react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Fuel, LayoutDashboard, History, Settings as SettingsIcon, LogOut } from 'lucide-react';
 
-function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'add' | 'history' | 'settings'>('dashboard');
+  const { currentUser, logout } = useAuth();
   const { receipts, loading, error, addReceipt, deleteReceipt } = useRefuelReceipts();
   const { settings, updateSettings } = useSettings();
+
+  if (!currentUser) {
+    return <Login />;
+  }
 
   if (loading) {
     return (
@@ -45,8 +52,18 @@ function App() {
               <Fuel className="h-8 w-8 text-primary" />
               <h1 className="text-2xl font-bold">Family Fuel Tracker</h1>
             </div>
-            <div className="text-sm text-muted-foreground">
-              Per refuel limit: {settings.perRefuelLimit}L
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-muted-foreground">
+                {currentUser.email}
+              </div>
+              <button
+                onClick={logout}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                title="Logout"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
             </div>
           </div>
         </div>
@@ -128,6 +145,14 @@ function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

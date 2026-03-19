@@ -66,13 +66,14 @@ export function HistoryTable({ receipts, currency, onDelete }: HistoryTableProps
                   <th className="pb-2 font-semibold text-right">Total Liters</th>
                   <th className="pb-2 font-semibold text-right">Price/L</th>
                   <th className="pb-2 font-semibold text-right">Total</th>
+                  <th className="pb-2 font-semibold">Created By</th>
                   <th className="pb-2 font-semibold"></th>
                 </tr>
               </thead>
               <tbody>
                 {filteredReceipts.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                    <td colSpan={7} className="py-8 text-center text-muted-foreground">
                       No entries found
                     </td>
                   </tr>
@@ -99,6 +100,9 @@ export function HistoryTable({ receipts, currency, onDelete }: HistoryTableProps
                         </td>
                         <td className="py-3 text-right font-semibold">
                           {currency}{r.totalCost.toFixed(2)}
+                        </td>
+                        <td className="py-3 text-xs text-muted-foreground">
+                          {r.createdBy || 'Legacy'}
                         </td>
                         <td className="py-3 text-right">
                           <Button

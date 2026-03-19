@@ -11,6 +11,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { useAuth } from '../contexts/AuthContext';
 import type { RefuelReceipt } from '../types';
 
 function stripUndefined<T extends Record<string, unknown>>(obj: T): T {
@@ -20,6 +21,7 @@ function stripUndefined<T extends Record<string, unknown>>(obj: T): T {
 }
 
 export function useRefuelReceipts() {
+  const { currentUser } = useAuth();
   const [receipts, setReceipts] = useState<RefuelReceipt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,6 +50,8 @@ export function useRefuelReceipts() {
             location: docData.location,
             notes: docData.notes,
             createdAt: docData.createdAt.toDate(),
+            createdBy: docData.createdBy,
+            createdByUid: docData.createdByUid,
           };
         });
 
@@ -63,12 +67,14 @@ export function useRefuelReceipts() {
     return () => unsubscribe();
   }, []);
 
-  const addReceipt = async (receipt: Omit<RefuelReceipt, 'id' | 'createdAt'>) => {
+  const addReceipt = async (receipt: Omit<RefuelReceipt, 'id' | 'createdAt' | 'createdBy' | 'createdByUid'>) => {
     try {
       const payload = stripUndefined({
         ...receipt,
         date: Timestamp.fromDate(receipt.date),
         createdAt: Timestamp.fromDate(new Date()),
+        createdBy: currentUser?.email || undefined,
+        createdByUid: currentUser?.uid || undefined,
       });
 
       await addDoc(collection(db, 'refuelReceipts'), payload);
