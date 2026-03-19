@@ -150,22 +150,40 @@ When deploying to Netlify/Vercel:
 2. Make sure to prefix them with `VITE_`
 3. Redeploy the application
 
-## Optional: Add Authentication (Recommended for Production)
+## Step 9: Enable Firebase Authentication (Required)
 
-If you want to add user authentication:
+This app now requires user authentication to access the fuel tracker.
 
 1. In Firebase Console, go to "Build" → "Authentication"
 2. Click "Get started"
-3. Enable "Email/Password" or "Google" sign-in
-4. Update Firestore rules to require authentication:
+3. Click on "Email/Password" under "Sign-in method"
+4. Enable "Email/Password" (toggle the switch)
+5. Click "Save"
+
+## Step 10: Update Firestore Security Rules (Required)
+
+Now that authentication is enabled, you must update the security rules to require authentication:
+
+1. In Firestore Database, click the "Rules" tab
+2. Replace the existing rules with:
 
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Legacy (single-car) entries - require authentication
     match /fuelEntries/{entry} {
       allow read, write: if request.auth != null;
     }
+
+    // New (2-car) refuel receipt entries - require authentication
+    match /refuelReceipts/{receipt} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null;
+    }
+    
+    // Settings - require authentication
     match /settings/{setting} {
       allow read, write: if request.auth != null;
     }
@@ -173,7 +191,42 @@ service cloud.firestore {
 }
 ```
 
-5. Implement authentication in your React app (requires additional code)
+3. Click "Publish"
+
+**Important**: These rules now require users to be authenticated. All family members will need to create an account to access the app.
+
+## Step 11: Create User Accounts in Firebase Console
+
+Users cannot sign up through the app. You must create accounts in Firebase Console:
+
+1. In Firebase Console, go to "Build" → "Authentication"
+2. Click on the "Users" tab
+3. Click "Add user" button
+4. Enter the user's email address
+5. Enter a password (minimum 6 characters)
+6. Click "Add user"
+7. Repeat for each family member who needs access
+8. Share the login credentials with each user securely
+
+## Authentication Features
+
+The app now includes:
+
+- **Login Only**: Users sign in with credentials created by the administrator in Firebase Console
+- **No Public Sign-Up**: Unauthorized users cannot create accounts through the app
+- **Logout**: Sign out from the app (button in header)
+- **Shared Family Data**: All authenticated users see the same fuel entries
+- **Creator Tracking**: Each entry shows who created it in the History table
+- **Persistent Sessions**: Users stay logged in until they explicitly log out
+
+## Managing Users
+
+To add or remove users:
+
+1. Go to Firebase Console → Authentication → Users
+2. **Add user**: Click "Add user" and enter email/password
+3. **Delete user**: Click the three dots (⋮) next to a user and select "Delete user"
+4. **Reset password**: Click the three dots (⋮) and select "Reset password" to send a password reset email
 
 ## Support
 
