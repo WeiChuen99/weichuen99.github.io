@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { useAuth } from '../contexts/AuthContext';
 import type { Settings } from '../types';
 import { DEFAULT_SETTINGS } from '../lib/constants';
 
 export function useSettings() {
+  const { currentUser } = useAuth();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
+
     const loadSettings = async () => {
       try {
         const docRef = doc(db, 'settings', 'app');
@@ -35,7 +42,7 @@ export function useSettings() {
     };
 
     loadSettings();
-  }, []);
+  }, [currentUser]);
 
   const updateSettings = async (newSettings: Partial<Settings>) => {
     try {

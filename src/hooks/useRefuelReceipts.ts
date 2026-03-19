@@ -27,6 +27,11 @@ export function useRefuelReceipts() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
+
     const q = query(collection(db, 'refuelReceipts'), orderBy('date', 'desc'));
 
     const unsubscribe = onSnapshot(
@@ -65,7 +70,7 @@ export function useRefuelReceipts() {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [currentUser]);
 
   const addReceipt = async (receipt: Omit<RefuelReceipt, 'id' | 'createdAt' | 'createdBy' | 'createdByUid'>) => {
     try {
