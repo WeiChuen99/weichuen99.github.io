@@ -1,6 +1,10 @@
 # Family Fuel Tracker
 
+[![Deploy to GitHub Pages](https://github.com/WeiChuen99/Fam-Website/actions/workflows/deploy.yml/badge.svg)](https://github.com/WeiChuen99/Fam-Website/actions/workflows/deploy.yml)
+
 A modern, user-friendly web application to track fuel refills across multiple family cars with weekly budget monitoring and analytics.
+
+🚀 **[Live Demo](https://weichuen99.github.io/Fam-Website/)**
 
 ## Features
 
@@ -107,13 +111,63 @@ The production-ready files will be in the `dist` folder.
 
 ## Deployment
 
-### Deploy to Netlify
+### GitHub Pages (Current Deployment)
+
+This project is automatically deployed to GitHub Pages using GitHub Actions.
+
+**Live URL**: https://weichuen99.github.io/Fam-Website/
+
+#### Automatic Deployment
+
+Every push to the `main` branch automatically triggers a deployment:
+
+1. GitHub Actions builds the project
+2. Injects Firebase environment variables from GitHub Secrets
+3. Deploys the `dist` folder to GitHub Pages
+4. Site is live within 2-3 minutes
+
+#### Setting Up GitHub Pages (First Time)
+
+1. **Enable GitHub Pages**:
+   - Go to repository Settings → Pages
+   - Source: Select "GitHub Actions"
+   - Save changes
+
+2. **Add Firebase Secrets**:
+   - Go to repository Settings → Secrets and variables → Actions
+   - Add the following secrets:
+     - `VITE_FIREBASE_API_KEY`
+     - `VITE_FIREBASE_AUTH_DOMAIN`
+     - `VITE_FIREBASE_PROJECT_ID`
+     - `VITE_FIREBASE_STORAGE_BUCKET`
+     - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+     - `VITE_FIREBASE_APP_ID`
+
+3. **Trigger Deployment**:
+   - Push changes to `main` branch
+   - Or manually trigger from Actions tab
+
+#### Updating the Site
+
+Simply push your changes to the `main` branch:
+
+```bash
+git add .
+git commit -m "Your update message"
+git push origin main
+```
+
+The site will automatically rebuild and deploy.
+
+### Alternative Deployment Options
+
+#### Deploy to Netlify
 
 1. Build the project: `npm run build`
 2. Deploy the `dist` folder to Netlify
 3. Add environment variables in Netlify dashboard
 
-### Deploy to Vercel
+#### Deploy to Vercel
 
 1. Connect your GitHub repository to Vercel
 2. Add environment variables in Vercel dashboard
